@@ -16,8 +16,8 @@ patch_linux_claude_code() {
 
 	# New format (Claude >= 1.1.3541): getHostPlatform includes arch detection for win32
 	# Pattern: if(process.platform==="win32")return e==="arm64"?"win32-arm64":"win32-x64";throw new Error(...)
-	if grep -qP 'if\(process\.platform==="win32"\)return \w+==="arm64"\?"win32-arm64":"win32-x64";throw' "$index_js"; then
-		sed -i -E 's/if\(process\.platform==="win32"\)return (\w+)==="arm64"\?"win32-arm64":"win32-x64";throw/if(process.platform==="win32")return \1==="arm64"?"win32-arm64":"win32-x64";if(process.platform==="linux")return \1==="arm64"?"linux-arm64":"linux-x64";throw/' "$index_js"
+	if grep -qP 'if\(process\.platform==="win32"\)return [\w\$]+==="arm64"\?"win32-arm64":"win32-x64";throw' "$index_js"; then
+		sed -i -E 's/if\(process\.platform==="win32"\)return ([\w\$]+)==="arm64"\?"win32-arm64":"win32-x64";throw/if(process.platform==="win32")return \1==="arm64"?"win32-arm64":"win32-x64";if(process.platform==="linux")return \1==="arm64"?"linux-arm64":"linux-x64";throw/' "$index_js"
 		echo 'Added linux claude code support (new arch-aware format)'
 	# Old format (Claude <= 1.1.3363): no arch detection for win32
 	elif grep -q 'if(process.platform==="win32")return"win32-x64";' "$index_js"; then
